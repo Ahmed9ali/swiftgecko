@@ -19,10 +19,10 @@ class Prefs(ctx: Context) {
     val tabsJson: String get() = sp.getString("tabs", "[]") ?: "[]"
     val tabsSelected: Int get() = sp.getInt("tabsSel", 0)
 
-    fun setEngine(v: String) { engine = v; sp.edit().putString("engine", v).apply() }
-    fun setTheme(v: Int) { theme = v; sp.edit().putInt("theme", v).apply() }
-    fun setStrict(v: Boolean) { strict = v; sp.edit().putBoolean("strict", v).apply() }
-    fun setRestore(v: Boolean) { restore = v; sp.edit().putBoolean("restore", v).apply() }
+    @JvmName("applyEngine") fun setEngine(v: String) { engine = v; sp.edit().putString("engine", v).apply() }
+    @JvmName("applyTheme") fun setTheme(v: Int) { theme = v; sp.edit().putInt("theme", v).apply() }
+    @JvmName("applyStrict") fun setStrict(v: Boolean) { strict = v; sp.edit().putBoolean("strict", v).apply() }
+    @JvmName("applyRestore") fun setRestore(v: Boolean) { restore = v; sp.edit().putBoolean("restore", v).apply() }
     fun addBlocked(n: Int) { blockedTotal += n; sp.edit().putInt("blocked", blockedTotal).apply() }
     fun saveTabs(json: String, selected: Int) { sp.edit().putString("tabs", json).putInt("tabsSel", selected).apply() }
 
