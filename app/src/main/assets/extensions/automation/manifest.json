@@ -1,0 +1,12 @@
+{
+  "manifest_version": 2,
+  "name": "Swift Automation",
+  "version": "1.0",
+  "description": "Lets the browser app drive pages (click, type, read, wait) through a native port.",
+  "browser_specific_settings": { "gecko": { "id": "automation@swift.browser" } },
+  "permissions": ["nativeMessaging", "nativeMessagingFromContent", "geckoViewAddons", "<all_urls>"],
+  "content_security_policy": "script-src 'self' 'unsafe-eval'; object-src 'self'",
+  "content_scripts": [
+    { "matches": ["<all_urls>"], "js": ["content.js"], "run_at": "document_start", "all_frames": false }
+  ]
+}

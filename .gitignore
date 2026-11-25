@@ -1,0 +1,9 @@
+.gradle/
+build/
+local.properties
+.idea/
+*.iml
+# downloaded by scripts/fetch_extensions.py (re-created in CI):
+app/src/main/assets/extensions/*
+!app/src/main/assets/extensions/automation/
+!app/src/main/assets/extensions/extensions.json
