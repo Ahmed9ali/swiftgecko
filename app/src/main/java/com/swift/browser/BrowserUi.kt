@@ -422,7 +422,7 @@ fun MenuRow(icon: androidx.compose.ui.graphics.vector.ImageVector, label: String
 fun ShieldsSheet(app: SwiftApp, tab: Tab, onDismiss: () -> Unit) {
     var up by remember { mutableStateOf(true) }
     LaunchedEffect(tab.id, tab.url) {
-        app.runtime.contentBlockingController.checkException(tab.session).accept({ ex: Boolean? -> up = ex != true }, { _: Throwable? -> })
+        Shields.isUp(app, tab) { up = it }
     }
     ModalBottomSheet(onDismissRequest = onDismiss) {
         Column(Modifier.padding(horizontal = 20.dp).padding(bottom = 28.dp)) {
@@ -433,8 +433,7 @@ fun ShieldsSheet(app: SwiftApp, tab: Tab, onDismiss: () -> Unit) {
                 Text("Tracking protection for this site", Modifier.weight(1f))
                 Switch(checked = up, onCheckedChange = { on ->
                     up = on
-                    val c = app.runtime.contentBlockingController
-                    if (on) c.removeException(tab.session) else c.addException(tab.session)
+                    Shields.set(app, tab, on)
                     tab.session.reload()
                 })
             }

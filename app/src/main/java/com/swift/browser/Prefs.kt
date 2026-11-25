@@ -26,6 +26,14 @@ class Prefs(ctx: Context) {
     fun addBlocked(n: Int) { blockedTotal += n; sp.edit().putInt("blocked", blockedTotal).apply() }
     fun saveTabs(json: String, selected: Int) { sp.edit().putString("tabs", json).putInt("tabsSel", selected).apply() }
 
+    private val shieldsOffHosts: MutableSet<String> = (sp.getStringSet("shieldsOff", emptySet()) ?: emptySet()).toMutableSet()
+    fun shieldsOff(host: String) = host in shieldsOffHosts
+    fun setShieldsOff(host: String, off: Boolean) {
+        if (host.isBlank()) return
+        if (off) shieldsOffHosts.add(host) else shieldsOffHosts.remove(host)
+        sp.edit().putStringSet("shieldsOff", HashSet(shieldsOffHosts)).apply()
+    }
+
     companion object {
         val ENGINES = linkedMapOf(
             "brave" to ("Brave Search" to "https://search.brave.com/search?q=%s"),

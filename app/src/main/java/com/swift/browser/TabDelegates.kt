@@ -70,6 +70,7 @@ class TabDelegates(
 
     // ---------------------------------------------------------------- progress
     override fun onPageStart(session: GeckoSession, url: String) {
+        Shields.apply(app, tab, url)
         tab.opened = true
         tab.loading = true
         tab.progress = 5
