@@ -24,6 +24,7 @@ class TabDelegates(
         hasUserGesture: Boolean,
     ) {
         tab.opened = true
+        DebugLog.d("tab${tab.id}", "location $url")
         tab.url = if (url == null || url == "about:blank") "" else url
         if (tab.url.isNotEmpty()) tab.pendingUrl = null
     }
@@ -56,6 +57,7 @@ class TabDelegates(
     }
 
     override fun onLoadError(session: GeckoSession, uri: String?, error: WebRequestError): GeckoResult<String>? {
+        DebugLog.d("tab${tab.id}", "LOAD ERROR $uri code=${error.code} category=${error.category}")
         val u = (uri ?: "").replace("<", "&lt;")
         val html = """
             <html><head><meta name="viewport" content="width=device-width,initial-scale=1">
@@ -72,6 +74,7 @@ class TabDelegates(
     override fun onPageStart(session: GeckoSession, url: String) {
         Shields.apply(app, tab, url)
         tab.opened = true
+        DebugLog.d("tab${tab.id}", "page start $url")
         tab.loading = true
         tab.progress = 5
         tab.blocked = 0
@@ -79,6 +82,7 @@ class TabDelegates(
     }
 
     override fun onPageStop(session: GeckoSession, success: Boolean) {
+        DebugLog.d("tab${tab.id}", "page stop success=$success")
         tab.loading = false
         tab.progress = 100
         if (success && !tab.isPrivate && tab.url.isNotEmpty()) app.store.addHistory(tab.url, tab.title)
@@ -119,6 +123,7 @@ class TabDelegates(
     override fun onKill(session: GeckoSession) = recover(session)
 
     private fun recover(session: GeckoSession) {
+        DebugLog.d("tab${tab.id}", "content process crashed/killed, reopening")
         session.open(app.runtime)
         tab.opened = true
         if (tab.url.isNotEmpty()) session.loadUri(tab.url)

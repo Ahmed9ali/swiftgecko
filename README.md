@@ -58,3 +58,13 @@ Open **Menu > Automation** to run a script. To plug in your own logic, call
 - No sync, no password manager UI (Android autofill is enabled), no reader mode, no translations.
 - Downloads list is not saved across restarts. History/bookmarks are kept in SharedPreferences.
 - The debug APK is signed with the debug key: fine for your own phone, not for Play Store.
+
+## Diagnostics (added after the "pages do not open / random closing" report)
+- `SwiftApp` now starts the Gecko engine **only in the main Android process**. GeckoView runs page/GPU work in
+  separate processes (`:tab0`, `:gpu`, ...) that also load the Application class; starting a second engine there
+  made the browser crash and pages never load.
+- Settings > **Diagnostics (event log)** shows the last 300 events (navigation, page start/stop, load errors,
+  extension loading, content-process crashes). Use Copy / Share and send it along with any bug report.
+- If the app dies with a Java exception, the next start shows **"The app crashed last time"** with the stack trace.
+- If the engine cannot start at all, a dialog shows the reason instead of closing the app.
+- With a PC: `adb logcat -s Swift:D AndroidRuntime:E` (or `adb logcat | grep -iE "swift|gecko|fatal"`).

@@ -49,8 +49,8 @@ class ExtensionHost(private val app: SwiftApp) {
             entries.add(e)
             app.runtime.webExtensionController
                 .ensureBuiltIn("resource://android/assets/extensions/${e.dir}/", e.id)
-                .accept({ ext: WebExtension? -> if (ext != null) onInstalled(e, ext) },
-                        { t: Throwable? -> e.error = t?.message ?: "failed"; Log.e(TAG, "ensureBuiltIn ${e.dir}", t) })
+                .accept({ ext: WebExtension? -> DebugLog.d("ext", "loaded ${e.dir} ok=${ext != null}"); if (ext != null) onInstalled(e, ext) },
+                        { t: Throwable? -> e.error = t?.message ?: "failed"; DebugLog.d("ext", "FAILED ${e.dir}: ${t?.message}"); Log.e(TAG, "ensureBuiltIn ${e.dir}", t) })
         }
     }
 

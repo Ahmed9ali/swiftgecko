@@ -61,6 +61,7 @@ fun BrowserApp(app: SwiftApp) {
     var focused by remember { mutableStateOf(false) }
     var query by remember { mutableStateOf(TextFieldValue("")) }
     var focusTick by remember { mutableIntStateOf(0) }
+    var crashText by remember { mutableStateOf(CrashLog.read(app)) }
     val requester = remember { FocusRequester() }
     val accent = if (tab?.isPrivate == true) PrivatePurple else MaterialTheme.colorScheme.primary
 
@@ -133,6 +134,10 @@ fun BrowserApp(app: SwiftApp) {
     if (shields && tab != null) ShieldsSheet(app, tab) { shields = false }
     b.context?.let { ContextSheet(app, it) { b.context = null } }
     b.prompt?.let { PromptDialog(b, it) }
+    crashText?.let { txt ->
+        DiagnosticsDialog("The app crashed last time", txt, b.host, onClose = { crashText = null },
+            onClear = { CrashLog.clear(app); crashText = null })
+    }
 }
 
 @Composable
@@ -142,7 +147,7 @@ fun GeckoSurface(b: BrowserState, tab: Tab, modifier: Modifier) {
         factory = { ctx -> GeckoView(ctx).also { it.setAutofillEnabled(true); b.geckoView = it } },
         update = { v ->
             if (tab.opened) {
-                if (v.session !== tab.session) v.setSession(tab.session)
+                if (v.session !== tab.session) { DebugLog.d("ui", "bind session of tab ${tab.id}"); v.setSession(tab.session) }
                 tab.session.setActive(true)
             }
         },

@@ -181,6 +181,7 @@ fun DownloadsScreen(app: SwiftApp, onBack: () -> Unit) {
 fun SettingsScreen(app: SwiftApp, onBack: () -> Unit) {
     val ctx = LocalContext.current
     var confirmClear by remember { mutableStateOf(false) }
+    var showLog by remember { mutableStateOf(false) }
     ScreenScaffold("Settings", onBack) { pad ->
         Column(Modifier.padding(pad).verticalScroll(rememberScrollState())) {
             SectionTitle("Search engine")
@@ -205,9 +206,11 @@ fun SettingsScreen(app: SwiftApp, onBack: () -> Unit) {
             TextButton(onClick = {
                 try { ctx.startActivity(Intent(android.provider.Settings.ACTION_MANAGE_DEFAULT_APPS_SETTINGS)) } catch (_: Exception) { }
             }, Modifier.padding(horizontal = 8.dp)) { Text("Set as default browser") }
+            TextButton(onClick = { showLog = true }, Modifier.padding(horizontal = 8.dp)) { Text("Diagnostics (event log)") }
             Text("Swift Browser 0.1  ·  Gecko engine", Modifier.padding(16.dp), fontSize = 12.sp, color = MaterialTheme.colorScheme.onSurfaceVariant)
         }
     }
+    if (showLog) DiagnosticsDialog("Diagnostics", DebugLog.dump(), app.browser.host, onClose = { showLog = false }, onClear = { DebugLog.clear() })
     if (confirmClear) AlertDialog(
         onDismissRequest = { confirmClear = false },
         title = { Text("Clear browsing data?") },

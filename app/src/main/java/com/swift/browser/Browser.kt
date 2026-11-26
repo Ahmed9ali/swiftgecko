@@ -131,7 +131,9 @@ class BrowserState(private val app: SwiftApp) {
     /** Address-bar input: URL or search terms. */
     fun go(input: String) {
         val t = current ?: newTab()
-        load(t, Omnibox.resolve(input, app.prefs.engineTemplate))
+        val u = Omnibox.resolve(input, app.prefs.engineTemplate)
+        DebugLog.d("nav", "go '$input' -> $u (tab ${t.id}, open=${t.session.isOpen})")
+        load(t, u)
     }
 
     fun select(id: Int) {

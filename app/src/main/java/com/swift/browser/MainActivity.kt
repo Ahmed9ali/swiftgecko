@@ -41,6 +41,10 @@ class MainActivity : ComponentActivity(), UiHost {
     override fun onCreate(savedInstanceState: Bundle?) {
         enableEdgeToEdge()
         super.onCreate(savedInstanceState)
+        if (!app.ready) {
+            setContent { SwiftTheme(0) { DiagnosticsDialog("The browser engine could not start", app.startupError ?: "unknown error", this, onClose = { finish() }) } }
+            return
+        }
         app.browser.host = this
         app.browser.startIfNeeded()
         handleIntent(intent)
@@ -49,7 +53,7 @@ class MainActivity : ComponentActivity(), UiHost {
 
     override fun onNewIntent(intent: Intent) {
         super.onNewIntent(intent)
-        handleIntent(intent)
+        if (app.ready) handleIntent(intent)
     }
 
     private fun handleIntent(i: Intent?) {
@@ -60,8 +64,8 @@ class MainActivity : ComponentActivity(), UiHost {
         }
     }
 
-    override fun onResume() { super.onResume(); app.browser.host = this }
-    override fun onPause() { super.onPause(); app.browser.saveTabs() }
+    override fun onResume() { super.onResume(); if (app.ready) app.browser.host = this }
+    override fun onPause() { super.onPause(); if (app.ready) app.browser.saveTabs() }
 
     // ------------------------------------------------------------ UiHost
     override fun pickFiles(multiple: Boolean, mimeTypes: Array<String>?, cb: (List<Uri>) -> Unit) {
